@@ -21,6 +21,7 @@ app.secret_key = "something_special"
 
 competitions = loadCompetitions()
 clubs = loadClubs()
+valeur_place = 3
 
 
 @app.route("/")
@@ -86,12 +87,17 @@ def purchasePlaces():
     date_competition = datetime.fromisoformat(competition.get("date"))
     if date_competition < datetime.now():
         flash("La date de cette compétition est passée.")
+    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
+
+    if placesRequired * valeur_place > int(club.get("points")):
+        flash("Vous ne disposez pas d'assez de points")
         return (
             render_template("welcome.html", club=club, competitions=competitions),
             403,
         )
 
     competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
+    club["points"] = str(int(club["points"]) - placesRequired * valeur_place)
     flash("Great-booking complete!")
     return render_template("welcome.html", club=club, competitions=competitions)
 
