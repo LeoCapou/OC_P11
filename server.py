@@ -16,7 +16,7 @@ def loadCompetitions():
     with open("competitions.json") as comps:
         jsonfile = json.load(comps)
         if "competitions" in jsonfile.keys():
-            listOfCompetitions = json.load(comps)["competitions"]
+            listOfCompetitions = jsonfile["competitions"]
         else:
             listOfCompetitions = {}
         return listOfCompetitions
