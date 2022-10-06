@@ -1,5 +1,4 @@
 import json
-import sys
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
@@ -57,9 +56,27 @@ def purchasePlaces():
     ]
     club = [c for c in clubs if c["name"] == request.form["club"]][0]
     placesRequired = int(request.form["places"])
-    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
-    flash("Great-booking complete!")
-    return render_template("welcome.html", club=club, competitions=competitions)
+    competition_places = int(competition["numberOfPlaces"])
+    club_points = int(club["points"])
+
+    if placesRequired > competition_places:
+        flash(
+            f"Vous ne pouvez pas réserver {placesRequired} places. Le nombre maximum de places disponibles pour cette compétition est de {competition_places}."
+        )
+        return render_template("booking.html", club=club, competition=competition), 403
+    elif placesRequired > club_points:
+        flash(
+            f"Vous ne pouvez pas réserver {placesRequired} places. Votre club ne dispose que de {club_points} points."
+        )
+        return render_template("booking.html", club=club, competition=competition), 403
+    else:
+        flash("Great-booking complete!")
+        club["points"] = club_points - placesRequired
+        competition["numberOfPlaces"] = competition_places - placesRequired
+        return (
+            render_template("welcome.html", club=club, competitions=competitions),
+            200,
+        )
 
 
 # TODO: Add route for points display
