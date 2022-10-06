@@ -6,13 +6,21 @@ from datetime import datetime
 
 def loadClubs():
     with open("clubs.json") as c:
-        listOfClubs = json.load(c)["clubs"]
+        jsonfile = json.load(c)
+        if "clubs" in jsonfile.keys():
+            listOfClubs = jsonfile["clubs"]
+        else:
+            listOfClubs = {}
         return listOfClubs
 
 
 def loadCompetitions():
     with open("competitions.json") as comps:
-        listOfCompetitions = json.load(comps)["competitions"]
+        jsonfile = json.load(comps)
+        if "competitions" in jsonfile.keys():
+            listOfCompetitions = jsonfile["competitions"]
+        else:
+            listOfCompetitions = {}
         return listOfCompetitions
 
 
@@ -102,7 +110,10 @@ def purchasePlaces():
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
-# TODO: Add route for points display
+@app.route("/clubs_points/<email>")
+def display_clubs_points(email):
+    other_clubs = [club for club in clubs if club["email"] != email]
+    return render_template("clubs_points.html", clubs=other_clubs)
 
 
 @app.route("/logout")
