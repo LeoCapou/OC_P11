@@ -21,7 +21,7 @@ def mocks():
     competitions_obj = [
         {
             "name": "TEST Spring Festival",
-            "date": "2020-03-27 10:00:00",
+            "date": "2022-11-27 10:00:00",
             "numberOfPlaces": "25",
         },
         {

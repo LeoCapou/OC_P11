@@ -41,7 +41,12 @@ def index():
 def showSummary():
     try:
         club = [club for club in clubs if club["email"] == request.form["email"]][0]
-        return render_template("welcome.html", club=club, competitions=competitions)
+        return render_template(
+            "welcome.html",
+            club=club,
+            competitions=competitions,
+            email=request.form["email"],
+        )
     except:
         flash("Cet email ne correspond à aucun utilisateur.")
         return render_template("index.html")
@@ -80,34 +85,25 @@ def purchasePlaces():
             f"Vous ne pouvez pas réserver {placesRequired} places. Votre club ne dispose que de {club_points} points."
         )
         return render_template("booking.html", club=club, competition=competition), 403
-    else:
-        flash("Great-booking complete!")
-        club["points"] = club_points - placesRequired
-        competition["numberOfPlaces"] = competition_places - placesRequired
-        return (
-            render_template("welcome.html", club=club, competitions=competitions),
-            200,
-        )
-
-    if placesRequired > 12:
+    elif placesRequired > 12:
         flash("Il n' est pas autorisé de réserver plus de 12 places.")
-
-    date_competition = datetime.fromisoformat(competition.get("date"))
-    if date_competition < datetime.now():
+        return render_template("booking.html", club=club, competition=competition), 403
+    elif datetime.fromisoformat(competition.get("date")) < datetime.now():
         flash("La date de cette compétition est passée.")
-    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
-
-    if placesRequired * valeur_place > int(club.get("points")):
+        return render_template("booking.html", club=club, competition=competition), 403
+    elif placesRequired * valeur_place > int(club.get("points")):
         flash("Vous ne disposez pas d'assez de points")
         return (
             render_template("welcome.html", club=club, competitions=competitions),
             403,
         )
-
-    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
-    club["points"] = str(int(club["points"]) - placesRequired * valeur_place)
-    flash("Great-booking complete!")
-    return render_template("welcome.html", club=club, competitions=competitions)
+    else:
+        competition["numberOfPlaces"] = (
+            int(competition["numberOfPlaces"]) - placesRequired
+        )
+        club["points"] = str(int(club["points"]) - placesRequired * valeur_place)
+        flash("Great-booking complete!")
+        return render_template("welcome.html", club=club, competitions=competitions)
 
 
 @app.route("/clubs_points/<email>")
