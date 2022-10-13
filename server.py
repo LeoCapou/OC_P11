@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 
 from datetime import datetime
 
+from helpers.helper import get_club_by_email, get_club_by_name, get_competition_by_name
+
 
 def loadClubs():
     with open("clubs.json") as c:
@@ -40,7 +42,7 @@ def index():
 @app.route("/showSummary", methods=["POST"])
 def showSummary():
     try:
-        club = [club for club in clubs if club["email"] == request.form["email"]][0]
+        club = get_club_by_email(request.form["email"])
         return render_template(
             "welcome.html",
             club=club,
@@ -54,8 +56,8 @@ def showSummary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-    foundClub = [c for c in clubs if c["name"] == club][0]
-    foundCompetition = [c for c in competitions if c["name"] == competition][0]
+    foundClub = get_club_by_name(club)
+    foundCompetition = get_competition_by_name(competition)
     if foundClub and foundCompetition:
         return render_template(
             "booking.html", club=foundClub, competition=foundCompetition
@@ -67,10 +69,8 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
-    competition = [c for c in competitions if c["name"] == request.form["competition"]][
-        0
-    ]
-    club = [c for c in clubs if c["name"] == request.form["club"]][0]
+    competition = get_competition_by_name(request.form["competition"])
+    club = get_club_by_name(request.form["club"])
     placesRequired = int(request.form["places"])
     competition_places = int(competition["numberOfPlaces"])
     club_points = int(club["points"])

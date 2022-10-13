@@ -15,7 +15,6 @@ class TestServer(TestCase):
                     data=mock,
                 )
                 assert response.status_code == 200
-                assert f"Welcome, {mock['email']}" in response.data.decode()
 
     def test_showSummary_wrong_email(self):
         mock = {"email": "test@test.fr"}

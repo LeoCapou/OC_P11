@@ -7,8 +7,8 @@ import server
 def mocks():
     clubs_obj = [
         {
-            "name": "TEST Simply Lift",
-            "email": "test_john@simplylift.co",
+            "name": "Simply Lift",
+            "email": "john@simplylift.co",
             "points": "13",
         },
         {
