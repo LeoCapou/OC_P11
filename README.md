@@ -44,8 +44,8 @@
 
 5. Testing
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+    - The "Pytest" module is used for unit and integration testing. Just use the command:
+    <code>pytest</code>
+    - We use Locust for the performance report. First, launch the application with <code>flask run</code> and then in a second console use the <code>locust</code> command
 
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
